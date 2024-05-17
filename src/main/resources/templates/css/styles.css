@@ -1,0 +1,50 @@
+/*Authoization*/
+.container {
+    width: 20vw;
+    margin: 100px auto;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: #e8bdff;
+}
+.container input {
+    width: 100%;
+    padding: 10px 0px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #8f8f8f;
+    font-size: 1.5vh;
+
+}
+.container input:hover {
+    background-color: #f7f7f7;
+}
+
+.authAutorization {
+    text-align: center;
+}
+
+.review-block {
+    background-color: #f8f8f8;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.review-block h3 {
+    margin-top: 0;
+}
+
+.review-block p {
+    margin: 10px 0;
+}
+
+.review-block .author {
+    font-style: italic;
+}
+
+.stars {
+    color: #FFD700;
+    font-size: 18px;
+}

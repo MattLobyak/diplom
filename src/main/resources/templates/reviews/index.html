@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reviews</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+</head>
+<body>
+<!--/*@thymesVar id="review" type="ru.matthew.MyShop.models.Review"*/-->
+<div th:each="review : ${reviews}">
+    <a th:href="@{/reviews/{id}(id=${review.getId()})}"
+       th:text="${review.get() + ', ' + review.getDateOfPublishing()}">advertisment</a>
+    <p th:text="${review.getDescription()}">description</p>
+    <hr/>
+</div>
+<div th:if="${reviews == null}"> Нету </div>
+<br/>
+
+<a href="/reviews/new">Create new advertisment</a>
+</body>
+</html>

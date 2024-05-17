@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Создать объявление</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/advertisment.css}">
+</head>
+<body>
+
+<form th:method="POST" th:action="@{/advertisments}" th:object="${advertisment}" class="ad-form">
+  <h2>Создание объявления</h2>
+  <label for="title">Название:</label>
+  <input type="text" th:field="*{name}" id="title">
+  <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{description}">Name Error</div>
+
+  <label for="description">Описание:</label>
+  <textarea type="text" th:field="*{description}" id="description"></textarea>
+  <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</div>
+
+  <label for="category">Категория:</label>
+  <select id="category" name="category" required>
+    <option value="" disabled selected>Выберите категорию</option>
+    <option value="electronics">Электроника</option>
+    <option value="furniture">Мебель</option>
+    <option value="clothing">Одежда</option>
+    <option value="automotive">Автомобили</option>
+    <option value="real-estate">Недвижимость</option>
+  </select>
+
+  <label for="payment">Вид оплаты:</label>
+  <select th:field="*{payment}" id="payment" name="payment">
+    <option th:each="paymentOpt : ${T(ru.matthew.MyShop.models.Payment).values()}"
+            th:value="${paymentOpt}" th:text="${paymentOpt.getRuValue}"></option>
+  </select>
+
+  <label for="city">Город:</label>
+  <select th:field="*{city}" id="city" name="city">
+    <option value="" disabled selected>Выберите город</option>
+    <option th:each="cityOpt : ${T(ru.matthew.MyShop.models.City).values()}"
+            th:value="${cityOpt}" th:text="${cityOpt.getRuValue}"></option>
+  </select>
+
+  <button type="submit">Создать объявление</button>
+</form>
+
+</body>
+</html>

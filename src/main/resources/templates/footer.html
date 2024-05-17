@@ -1,0 +1,38 @@
+!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<body>
+<header th:fragment="copy">
+    © 2011 The Good Thymes Virtual Grocery
+</header>
+
+<div th:fragment="defaultHeader">
+    <header>
+        <div class="logo">
+            <a href="/advertisment/index">Маркетплейс</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/advertisments/index">Главная</a></li>
+                <li><a href="/users/index">Пользователи</a></li>
+                <li><a href="/advertisments/new">Добавить объявление</a></li>
+                <li><a href="/cart">Корзина</a></li>
+                <form action="/auth/logout" method="post">
+                    <input type="hidden" th:name="${_csrf.getParameterName()}" th:value="${_csrf.token}">
+                    <input type="submit" value="Выйти" style="background: none; border: none; color: white; cursor: pointer;">
+                </form>
+            </ul>
+        </nav>
+    </header>
+    <br><br><br><br>
+</div>
+
+<footer th:fragment="defaultFooter">
+    <p>&copy; 2024 Маркетплейс. Все права защищены.</p>
+</footer>
+
+</body>
+</html>

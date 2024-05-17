@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Show</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/usershow.css}">
+</head>
+<body>
+
+    <!--/*@thymesVar id="user" type="ru.matthew.MyShop.models.User"*/-->
+    <div class="container">
+        <div class="user-header">
+            <div class="avatar">
+                <img src="avatar.jpg" alt="Аватар пользователя">
+            </div>
+            <div>
+                <h1>Профиль пользователя</h1>
+                <div class="user-info">
+                    <p th:text="${user.getName() + ' ' + user.getSecondName()}"><strong>ФИО</strong></p>
+                    <p th:text="${'Телефон: ' + user.getPhoneNumber()}"><strong>Телефон</strong></p>
+    <!--                <p th:text="${'На сайте с: ' + user.getRegistrationDate}"><strong>Дата регистрации</strong></p>   TODO-->
+                    <p th:text="${'Объявлений: ' + user.getAdvertisments().size()}"><strong>Объявлений:</strong></p>
+                </div>
+            </div>
+        </div>
+        <!--/*@thymesVar id="advertisment" type="ru.matthew.MyShop.models.Advertisment"*/-->
+        <div class="ads">
+            <h2>Объявления</h2>
+            <div class="ad" th:each="advertisment : ${user.getAdvertisments()}">
+                <a th:href="@{/advertisments/{id}(id=${advertisment.getId()})}" th:text="${advertisment.getName()}">advertisment</a>
+                <p th:text="${advertisment.getDescription()}"><strong>Описание:</strong> Описание </p>
+                <p th:text="${advertisment.getDateOfPublishing()}"><strong>Дата:</strong> Дата </p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/style_fragment.css}">
+</head>
+<body>
+
+<div th:replace="footer :: defaultHeader"></div>
+
+<!--/*@thymesVar id="user" type="ru.matthew.MyShop.models.User"*/-->
+<div class="moderation">
+    <div class="user-list">
+        <h2>Список пользователей</h2>
+        <div class="user" th:each="user : ${users}">
+            <div class="user-info">
+                <a th:href="@{/users/{id}(id=${user.getId()})}" th:text="${user.getSecondName() + ' ' +user.getName()}">user</a>
+                <span th:text="${user.getEmail()}">email</span>
+            </div>
+            <div class="user-buttons">
+                <button class="block-btn">Заблокировать</button>
+                <button class="unblock-btn">Разблокировать</button>
+            </div>
+            <hr>
+        </div>
+    </div>
+</div>
+
+
+<br/>
+<hr/>
+
+<a href="/users/new">Create new person</a>
+<div th:replace="footer :: defaultFooter"></div>
+</body>
+</html>
