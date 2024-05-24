@@ -84,6 +84,14 @@ header nav ul {
     padding: 0;
 }
 
+header nav {
+    padding-right: 2vw;
+}
+
+header nav ul form input {
+    font-size: 18px;
+}
+
 header nav a {
     color: #fff;
     text-decoration: none;

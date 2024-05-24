@@ -8,11 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.matthew.MyShop.models.*;
 import ru.matthew.MyShop.repository.AdvertismentRepository;
+import ru.matthew.MyShop.repository.BasketRepository;
 import ru.matthew.MyShop.repository.UserRepository;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,11 +24,29 @@ public class AdvertismentService {
 
     private final AdvertismentRepository advertismentRepository;
     private final UserRepository userRepository;
+    private final BasketRepository basketRepository;
+
+    public Page<Advertisment> getAllAdvertisments(){
+        return advertismentRepository.findAdvertismentByStatusEquals(Status.ACTIVE, PageRequest.of(0, 10));
+    }
+
+    public Page<Advertisment> getAllAdvertismentsToModerate(){
+        return advertismentRepository.findAdvertismentByStatusEquals(Status.MODERATION, PageRequest.of(0, 10));
+    }
 
     //Получение данных фильтра, номера страницы, количества элементов на ней
-    public Page<Advertisment> getAllAdvertisments(String title) {
-        if (title != null) return advertismentRepository.findAdvertismentByNameContains(title, PageRequest.of(0,2));
-        return advertismentRepository.findAll(PageRequest.of(0, 2));
+    public Page<Advertisment> getFilterAdvertisments(String title, Category category, City city, State state, Integer fromprice, Integer toprice) {
+        if (fromprice == null) fromprice = 0;
+        if (toprice == null) toprice = 1000000000;
+
+        System.out.println("Имя "  + title + "   Категория " + category + "   Город " + city + "   Качество " + state + "   Старт цена " + fromprice + "   Финал цена " + toprice);
+        if (category==null && city == null && state == null) {
+            System.out.println("По цене");
+            return advertismentRepository.findAdvertismentByNameContainsAndPriceIsGreaterThanAndPriceLessThanAndStatusEquals(title, fromprice, toprice, Status.ACTIVE, PageRequest.of(0,10));
+            } else{
+            return advertismentRepository.findAdvertismentByNameContainsAndStateEqualsAndCategoryEqualsAndCityEqualsAndPriceIsGreaterThanEqualAndPriceLessThanEqualAndStatusEquals(title, state,
+                    category, city, fromprice, toprice, Status.ACTIVE, PageRequest.of(0,10));
+        }
     }
 
     public Advertisment getAdvertisementById(long id) {
@@ -37,6 +57,9 @@ public class AdvertismentService {
 
     public Advertisment registerAdvertisment(Principal principal, Advertisment advertisment) {
         advertisment.setDateOfPublishing(LocalDate.now());
+        advertisment.setOwner(getUserByPrincipal(principal));
+        advertisment.setStatus(Status.MODERATION);
+        if (advertisment.getPayment() == Payment.FREE) advertisment.setPrice(0);
         return advertismentRepository.save(advertisment);
     }
 
@@ -91,6 +114,27 @@ public class AdvertismentService {
     }
 
     public void deleteAdvertisment(Long id) {
-        advertismentRepository.delete(advertismentRepository.findById(id).orElse(null));
+        Advertisment advertismentToDelete = advertismentRepository.findById(id).orElse(null);
+//        User owner = userRepository.findUserByAdvertismentsContains(advertismentToDelete);
+//        owner.getAdvertisments().remove(advertismentToDelete);
+//        userRepository.save(owner);
+        advertismentRepository.deleteById(id);
+        //advertismentRepository.deleteAll();
     }
+
+    public void addAdvertismentToBusket(long id, Principal principal) {
+        Basket basket = new Basket(null, id, userRepository.findUserByEmail(principal.getName()));
+        basketRepository.save(basket);
+    }
+
+    public List<Advertisment> findBasketAddvetisments(Principal principal) {
+        User user = userRepository.findUserByEmail(principal.getName());
+        List<Advertisment> basket = new ArrayList<>();
+        //List<Basket> basketItems = basketRepository.findBasketByOwner(userRepository.findUserByEmail(principal.getName()).getId());
+        for (Basket basketItem : user.getBasketItems() ){
+            basket.add(advertismentRepository.findById(basketItem.getAdvertismentId()).orElse(null));
+        }
+        return basket;
+    }
+
 }

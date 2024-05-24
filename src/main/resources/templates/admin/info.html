@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" th:href="@{/style_fragment.css}">
+    <title>Страница администратора</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header .logo a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tabs button {
+            background-color: #f8f8f8;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .tabs button.active {
+            background-color: #ddd;
+            border-bottom: 2px solid #333;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .content-section {
+            margin-bottom: 20px;
+        }
+
+        .content-section h3 {
+            margin: 0 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="footer :: defaultHeader"></div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-link active" onclick="openTab(event, 'moderation')">Объявления на модерацию</button>
+            <button class="tab-link" onclick="openTab(event, 'active')">Активные объявления</button>
+            <button class="tab-link" onclick="openTab(event, 'users')">Пользователи</button>
+        </div>
+        <!--/*@thymesVar id="advertismentsToMod" type="ru.matthew.MyShop.models.Advertisment"*/-->
+        <div id="moderation" class="tab-content active">
+            <div class="content-section" th:each="advertisment : ${advertismentsToMod}">
+                <a th:href="@{/advertisments/{id}(id=${advertisment.getId()})}" th:text="${advertisment.getName()}">advertisment</a>
+                <p th:text="${advertisment.getDescription()}"><strong>Описание:</strong> Описание </p>
+                <p th:text="${advertisment.getDateOfPublishing()}"><strong>Дата:</strong> Дата </p>
+            </div>
+        </div>
+
+        <!--/*@thymesVar id="advertismentsActive" type="ru.matthew.MyShop.models.Advertisment"*/-->
+        <div id="active" class="tab-content">
+            <div class="content-section" th:each="advertisment : ${advertismentsActive}">
+                <a th:href="@{/advertisments/{id}(id=${advertisment.getId()})}" th:text="${advertisment.getName()}">advertisment</a>
+                <p th:text="${advertisment.getDescription()}"><strong>Описание:</strong> Описание </p>
+                <p th:text="${advertisment.getDateOfPublishing()}"><strong>Дата:</strong> Дата </p>
+            </div>
+        </div>
+
+        <div id="users" class="tab-content">
+            <div class="content-section">
+                <h3>Пользователь 1</h3>
+                <p>Email: user1@example.com</p>
+                <button>Заблокировать</button>
+            </div>
+            <div class="content-section">
+                <h3>Пользователь 2</h3>
+                <p>Email: user2@example.com</p>
+                <button>Заблокировать</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTab(event, tabId) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tab-link");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabId).style.display = "block";
+            document.getElementById(tabId).classList.add("active");
+            event.currentTarget.classList.add("active");
+        }
+    </script>
+
+    <div th:replace="footer :: defaultFooter"></div>
+</body>
+</html>

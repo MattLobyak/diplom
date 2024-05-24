@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style_fragment.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/usershow.css}">
+</head>
+<body>
+    <div th:replace="footer :: defaultHeader"></div>
+
+    <div class="container">
+        <!--/*@thymesVar id="advertisments" type="ru.matthew.MyShop.models.Advertisment"*/-->
+        <div class="ads">
+            <h2>Моя корзина</h2>
+
+            <div class="ad" th:each="advertisment : ${advertisments}">
+                <a th:href="@{/advertisments/{id}(id=${advertisment.getId()})}" th:text="${advertisment.getName()}">advertisment</a>
+                <p th:text="${advertisment.getDescription()}"><strong>Описание:</strong> Описание </p>
+                <p th:text="${advertisment.getDateOfPublishing()}"><strong>Дата:</strong> Дата </p>
+            </div>
+            <div th:if="${advertisments == null}"> Здесь пока пусто </div>
+        </div>
+    </div>
+
+
+
+
+    <div th:replace="footer :: defaultFooter"></div>
+</body>
+</html>

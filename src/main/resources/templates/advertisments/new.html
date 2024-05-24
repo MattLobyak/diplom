@@ -7,6 +7,7 @@
 </head>
 <body>
 
+<!--/*@thymesVar id="advertisment" type="ru.matthew.MyShop.models.Advertisment"*/-->
 <form th:method="POST" th:action="@{/advertisments}" th:object="${advertisment}" class="ad-form">
   <h2>Создание объявления</h2>
   <label for="title">Название:</label>
@@ -18,13 +19,15 @@
   <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</div>
 
   <label for="category">Категория:</label>
-  <select id="category" name="category" required>
-    <option value="" disabled selected>Выберите категорию</option>
-    <option value="electronics">Электроника</option>
-    <option value="furniture">Мебель</option>
-    <option value="clothing">Одежда</option>
-    <option value="automotive">Автомобили</option>
-    <option value="real-estate">Недвижимость</option>
+  <select th:field="*{category}" id="category" name="category" required>
+    <option th:each="categoryOpt : ${T(ru.matthew.MyShop.models.Category).values()}"
+            th:value="${categoryOpt}" th:text="${categoryOpt.getRuValue}"></option>
+  </select>
+
+  <label for="state">Качество товара:</label>
+  <select th:field="*{state}" id="state" name="state">
+    <option th:each="stateOpt : ${T(ru.matthew.MyShop.models.State).values()}"
+            th:value="${stateOpt}" th:text="${stateOpt.getRuValue}"></option>
   </select>
 
   <label for="payment">Вид оплаты:</label>
@@ -32,6 +35,10 @@
     <option th:each="paymentOpt : ${T(ru.matthew.MyShop.models.Payment).values()}"
             th:value="${paymentOpt}" th:text="${paymentOpt.getRuValue}"></option>
   </select>
+
+  <label for="price">Цена:</label>
+  <input type="text" th:field="*{price}" id="price"></input>
+  <div style="color:red" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">price Error</div>
 
   <label for="city">Город:</label>
   <select th:field="*{city}" id="city" name="city">

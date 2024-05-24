@@ -39,12 +39,25 @@ public class Advertisment {
     @NotNull(message = "Цена не может быть пустой")
     private Payment payment;
 
+    @Column(name = "category")
+    @NotNull(message = "Категория не может быть пустой")
+    private Category category;
+
+    @Column(name = "price")
+    private Integer price;
+
     @Column(name = "dateOfPublishing")
     private LocalDate dateOfPublishing;
 
     @Column(name = "city")
     @NotNull(message = "Цена не может быть пустой")
     private City city;
+
+    @Column(name = "state")
+    private State state;
+
+    @Column(name = "status")
+    private Status status;
 
     //Связь Объявление с автором
     @ManyToOne

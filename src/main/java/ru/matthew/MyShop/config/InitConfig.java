@@ -34,27 +34,35 @@ public class InitConfig {
         if (adminUser == null) {
             System.out.println("Не был найден ни один аккаунт. Будет создана запись");
             //adminUser = new User(null, "Матвей", "Лобяк", "2222", "addmin@gmail.com", "375290000000", LocalDate.now(), LocalDate.now(), Role.ROLE_ADMIN);
-            adminUser = new User(null, "Матвей", "Лобяк", "2222", "admin@gmail.com", "+375290000000", Role.ROLE_ADMIN, new ArrayList<>(), new ArrayList<>());
+            adminUser = new User(null, "Матвей", "Лобяк", "2222", "admin@gmail.com", "+375290000000", Role.ROLE_ADMIN, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
             userService.registerUser(adminUser);
             //userRepository.saveAndFlush(adminUser);
-            User defaultUser = new User(null, "Петя", "Иванов", "3333", "aboba@gmail.com", "+375291111111", Role.ROLE_USER, new ArrayList<>(), new ArrayList<>());
+            User defaultUser = new User(null, "Петя", "Иванов", "3333", "petya@gmail.com", "+375291111111", Role.ROLE_USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
             userService.registerUser(defaultUser);
             userRepository.saveAndFlush(adminUser);
-            userRepository.saveAndFlush(new User(null, "Вася", "Сидоров", "3333", "aboba@gmail.com", "+375291111111", Role.ROLE_USER, new ArrayList<>(), new ArrayList<>()));
-            userRepository.saveAndFlush(new User(null, "Катя", "Абубенчик", "3333", "aboba@gmail.com", "+375291111111", Role.ROLE_USER, new ArrayList<>(), new ArrayList<>()));
+            userRepository.saveAndFlush(new User(null, "Вася", "Сидоров", "3333", "aboba@gmail.com", "+375291111111", Role.ROLE_USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
+            userRepository.saveAndFlush(new User(null, "Катя", "Абубенчик", "3333", "aboba@gmail.com", "+375291111111", Role.ROLE_USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
 
         }
         Advertisment baseAdvertisment = advertismentRepository.findAdvertismentByName("basic").orElse(null);
         if (baseAdvertisment == null) {
-            baseAdvertisment = new Advertisment(null, "basic", "дешево дешево дешево дешево дешево дешеводешево дешево дешево", Payment.PRICE, LocalDate.now(), City.BREST, adminUser, new ArrayList<>());
-            Advertisment testAdvertisment = new Advertisment(null, "test", "дешево дешево дешево дешево дешево дешеводешево дешево дешево", Payment.FREE, LocalDate.now(), City.MINSK, adminUser, new ArrayList<>());
+            baseAdvertisment = new Advertisment(null, "Ноутбук Asus", "15.6\" 1920 x 1080, IPS, 144 Гц, AMD Ryzen 5 7535HS, 16 ГБ DDR5, SSD 512 ГБ, видеокарта NVIDIA GeForce RTX 2050 4 ГБ, без ОС, цвет крышки черный, аккумулятор 48 Вт·ч", Payment.PRICE, Category.ELECTRONICS,2500, LocalDate.now(), City.MINSK, State.NEW, Status.ACTIVE, adminUser, new ArrayList<>());
+            Advertisment testAdvertisment = new Advertisment(null, "Мышь компьютерная", "дполноразмерная мышь для ПК, проводная USB, сенсор оптический 1200 dpi, 3 кнопки, колесо с нажатием, цвет черный", Payment.FREE, Category.ELECTRONICS,2000, LocalDate.now(), City.MINSK, State.PASTINUSAGE, Status.ACTIVE,adminUser, new ArrayList<>());
+            Advertisment testAdvertisment2 = new Advertisment(null, "XIAOMI REDMI 10 2022 6GB/128GB (СЕРЫЙ)", "Версия ОС: Android 11, Диагональ экрана: 6.5, Разрешение экрана: 1080x2400 px, Частота обновления матрицы: 90 Гц", Payment.FREE, Category.ELECTRONICS,500, LocalDate.now(), City.MINSK, State.PASTINUSAGE, Status.ACTIVE,adminUser, new ArrayList<>());
             advertismentRepository.saveAndFlush(baseAdvertisment);
             advertismentRepository.saveAndFlush(testAdvertisment);
+            advertismentRepository.saveAndFlush(testAdvertisment2);
         }
 
-        Review basicReview = new Review(null, 5, "Нормальный кал говна", LocalDate.now(), baseAdvertisment, adminUser);
+        Review basicReview = new Review(null, 4, "Хороший продукт", LocalDate.now(), baseAdvertisment, adminUser);
+        Review basicReview2 = new Review(null, 5, "Соответствует описанию. Рекомендую", LocalDate.now(), baseAdvertisment, adminUser);
+        Review basicReview3 = new Review(null, 1, "Пришел битый", LocalDate.now(), baseAdvertisment, adminUser);
+        Review basicReview4 = new Review(null, 5, "Отличный товар", LocalDate.now(), baseAdvertisment, adminUser);
         System.out.println(basicReview.toString());
         reviewRepository.saveAndFlush(basicReview);
+        reviewRepository.saveAndFlush(basicReview2);
+        reviewRepository.saveAndFlush(basicReview3);
+        reviewRepository.saveAndFlush(basicReview4);
 
     }
 }

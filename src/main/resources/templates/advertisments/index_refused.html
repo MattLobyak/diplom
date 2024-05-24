@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Все объявления</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/style_fragment.css}">
+</head>
+<body>
+<div th:replace="footer :: defaultHeader"></div>
+
+<form action="/advertisments/index" method="get">
+    Поиск по названию объявления: <input type="text" name="title"><br>
+    <input type="submit" value="Поиск"/>
+</form>
+<!--/*@thymesVar id="user" type="ru.matthew.MyShop.models.User"*/-->
+<h3 th:text="${'Пользователь ' + user.getName() + ' ' + user.getSecondName}"></h3>
+
+<!--/*@thymesVar id="advertisment" type="ru.matthew.MyShop.models.Advertisment"*/-->
+<div th:each="advertisment : ${advertisments}">
+    <a th:href="@{/advertisments/{id}(id=${advertisment.getId()})}"
+       th:text="${advertisment.getName() + ', ' + advertisment.getDateOfPublishing() + '  Оценка '+ advertisment.getRating() + '   Всего оценок' + advertisment.getReviews().size() }">advertisment</a>
+    <hr/>
+</div>
+<div th:if="${advertisments == null}"> Нету </div>
+<br/>
+
+<a href="/advertisments/new">Create new advertisment</a>
+
+<form action="/advertisments/index/{id}()" method="post">
+    <input type="hidden" th:name="${_csrf.getParameterName()}" th:value="${_csrf.token}">
+    <input type="submit" value="Выйти" style="background: none; border: none; color: white; cursor: pointer;">
+</form>
+
+<div th:replace="footer :: defaultFooter"></div>
+</body>
+</html>

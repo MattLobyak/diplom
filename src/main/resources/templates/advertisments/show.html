@@ -3,67 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/style_fragment.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/style_show.css}">
 </head>
 <body>
-<!--/*@thymesVar id="advertisment" type="ru.matthew.MyShop.models.Advertisment"*/-->
-<p th:text="${advertisment.getName()}">VALUE</p>
-<p th:text="${advertisment.getDescription()}">VALUE</p>
-<p th:text="${advertisment.getCity().getRuValue()}">VALUE</p>
-<p th:text="${advertisment.getDateOfPublishing()}">VALUE</p>
-<p th:text="${advertisment.getPayment().getRuValue()}">VALUE</p>
-<p th:text="${'ID: ' + advertisment.getId()}">VALUE</p>
+<div th:replace="footer :: defaultHeader"></div>
 
-<a th:href="@{/advertisments/{id}/edit(id=${advertisment.getId()})}">Edit</a>
-<br/>
-<!--/*@thymesVar id="advertisment" type="ru.matthew.MyShop.models.User"*/-->
-<a th:href="@{/users/{id}(id=${user.getId()})}"
-   th:text="${user.getName()}">user</a>
-<br/>
+    <!--/*@thymesVar id="advertisment" type="ru.matthew.MyShop.models.Advertisment"*/-->
+    <div class="container">
+        <div class="announcement">
+            <h1 th:text="${advertisment.getName()}">Название объявления</h1>
+            <p th:text="${advertisment.getDescription()}"><strong>Описание:</strong> Это описание вашего объявления. Здесь может быть любая информация, которую вы хотите указать.</p>
+            <p th:text="${advertisment.getPrice()+ ' р.'}"><strong>Цена:</strong> 1000 руб.</p>
+            <p><strong>Автор:</strong> <a th:text="${advertisment.getOwner().getSecondName() + ' ' + advertisment.getOwner().getName()}" th:href="@{/users/{id}(id=${advertisment.getOwner().getId()})}">ФИО</a></p>
+            <p th:text="${advertisment.getCity().getRuValue()}"><strong>Город:</strong> город</p>
+            <form th:method="GET" th:action="@{/advertisments/{id}/tobasket(id=${advertisment.getId()})}">-->
+                <input type="submit" value="В корзину!"/>
+            </form>
+        </div>
 
-<form th:method="GET" th:action="@{/advertisments/{id}/delete(id=${advertisment.getId()})}">
-    <input type="submit" value="Delete"/>
-</form>
-
-<br/><br/><br/>
-<h2>Отзывы:</h2>
-<!--/*@thymesVar id="review" type="ru.matthew.MyShop.models.Review"*/-->
-<form th:method="POST" th:action="@{/advertisments/{advertismentId}/newReview(advertismentId = ${advertisment.getId()})}" th:object="${newReview}">
-    <input type="hidden" th:field="*{id}" th:value="null">
-    <label for="rating">Enter rating: </label>
-    <input type="text" th:field="*{rating}" id="rating"/>
-    <div style="color:red" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}">rating Error</div>
-    <br/>
-
-    <label for="description">Enter description: </label>
-    <input type="text" th:field="*{description}" id="description"/>
-    <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">description Error</div>
-    <br/>
-    <input type="submit" value="Create!"/>
-</form>
-<hr/>
-
-<!--/*@thymesVar id="advertisment" type="ru.matthew.MyShop.models.Advertisment"*/-->
-<div class="review-block" th:each="review : ${advertisment.getReviews()}">
-    <div class="stars">
-        <p class="stars" th:if="${review.getRating() == 1}">&#9733;&#9734;&#9734;&#9734;&#9734;</p>
-        <p class="stars" th:if="${review.getRating() == 2}">&#9733;&#9733;&#9734;&#9734;&#9734;</p>
-        <p class="stars" th:if="${review.getRating() == 3}">&#9733;&#9733;&#9733;&#9734;&#9734;</p>
-        <p class="stars" th:if="${review.getRating() == 4}">&#9733;&#9733;&#9733;&#9733;&#9734;</p>
-        <p class="stars" th:if="${review.getRating() == 5}">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+        <div class="images-container">
+            <div class="images">
+                <div class="image">
+                    <img src="https://via.placeholder.com/800x400?text=Image+1" alt="Image 1">
+                </div>
+                <div class="image">
+                    <img src="https://via.placeholder.com/800x400?text=Image+2" alt="Image 2">
+                </div>
+                <div class="image">
+                    <img src="https://via.placeholder.com/800x400?text=Image+3" alt="Image 3">
+                </div>
+            </div>
+            <div class="buttons">
+                <div class="button" id="prevImageButton">Назад</div>
+                <div class="button" id="nextImageButton">Вперед</div>
+            </div>
+        </div>
     </div>
-    <p th:text="${review.getDescription()}">Описание отзыва</p>
-    <p class="author" th:text="|Автор: ${review.getUser().getName()}|">Автор</p>
-    <p>TODO ссылка для админа</p>
-</div>
+
+    <div class="reviews-container">
+        <div class="reviews">
+            <div class="review" th:each="review : ${advertisment.getReviews()}">
+                <div class="stars">
+                    <p class="stars" th:if="${review.getRating() == 1}">&#9733;&#9734;&#9734;&#9734;&#9734;</p>
+                    <p class="stars" th:if="${review.getRating() == 2}">&#9733;&#9733;&#9734;&#9734;&#9734;</p>
+                    <p class="stars" th:if="${review.getRating() == 3}">&#9733;&#9733;&#9733;&#9734;&#9734;</p>
+                    <p class="stars" th:if="${review.getRating() == 4}">&#9733;&#9733;&#9733;&#9733;&#9734;</p>
+                    <p class="stars" th:if="${review.getRating() == 5}">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+                </div>
+                <p th:text="${review.getDescription()}">Это отличный продукт! Очень доволен покупкой.</p>
+                <p><strong>Автор:</strong> <a th:text="${review.getUser().getSecondName() + ' ' + review.getUser().getName()}" th:href="@{/users/{id}(id=${review.getUser().getId()})}">ФИО</a></p>
+            </div>
+        </div>
+        <div class="buttons">
+            <div class="button" id="prevReviewButton"></div>
+            <div class="button" id="nextReviewButton"></div>
+        </div>
+    </div>
+    <form th:method="POST" th:action="@{/advertisments/{advertismentId}/newReview(advertismentId = ${advertisment.getId()})}" th:object="${newReview}">
+        <input type="hidden" th:field="*{id}" th:value="null">
+        <label for="rating">Рейтинг: </label>
+        <input type="text" th:field="*{rating}" id="rating"/>
+        <div style="color:red" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}">rating Error</div>
+        <br/>
+
+        <label for="description">Описание: </label>
+        <input type="text" th:field="*{description}" id="description"/>
+        <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">description Error</div>
+        <br/>
+        <input type="submit" value="Create!"/>
+    </form>
 
 
-<hr/>
-<div th:if="${advertisment.getReviews().isEmpty()}"> Нет отзывов</div>
+
+
+
+
+
+
+
+
+
+
+<!--    <p th:text="${advertisment.getName()}">VALUE</p>-->
+<!--    <p th:text="${advertisment.getDescription()}">VALUE</p>-->
+<!--    <p th:text="${advertisment.getCity().getRuValue()}">VALUE</p>-->
+<!--    <p th:text="${advertisment.getDateOfPublishing()}">VALUE</p>-->
+<!--    <p th:text="${advertisment.getPayment().getRuValue()}">VALUE</p>-->
+<!--    <p th:text="${'ID: ' + advertisment.getId()}">VALUE</p>-->
+
+<!--    <a th:href="@{/advertisments/{id}/edit(id=${advertisment.getId()})}">Edit</a>-->
+<!--    <br/>-->
+<!--    &lt;!&ndash;/*@thymesVar id="advertisment" type="ru.matthew.MyShop.models.User"*/&ndash;&gt;-->
+<!--    <a th:href="@{/users/{id}(id=${user.getId()})}"-->
+<!--       th:text="${user.getName()}">user</a>-->
+<!--    <br/>-->
+
+<!--    <form th:method="GET" th:action="@{/advertisments/{id}/delete(id=${advertisment.getId()})}">-->
+<!--        <input type="submit" value="Delete"/>-->
+<!--    </form>-->
+
+<!--    <br/><br/><br/>-->
+<!--    <h2>Отзывы:</h2>-->
+<!--    &lt;!&ndash;/*@thymesVar id="review" type="ru.matthew.MyShop.models.Review"*/&ndash;&gt;-->
+<!--    <form th:method="POST" th:action="@{/advertisments/{advertismentId}/newReview(advertismentId = ${advertisment.getId()})}" th:object="${newReview}">-->
+<!--        <input type="hidden" th:field="*{id}" th:value="null">-->
+<!--        <label for="rating">Enter rating: </label>-->
+<!--        <input type="text" th:field="*{rating}" id="rating"/>-->
+<!--        <div style="color:red" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}">rating Error</div>-->
+<!--        <br/>-->
+
+<!--        <label for="description">Enter description: </label>-->
+<!--        <input type="text" th:field="*{description}" id="description"/>-->
+<!--        <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">description Error</div>-->
+<!--        <br/>-->
+<!--        <input type="submit" value="Create!"/>-->
+<!--    </form>-->
+<!--    <hr/>-->
+
+<!--    &lt;!&ndash;/*@thymesVar id="advertisment" type="ru.matthew.MyShop.models.Advertisment"*/&ndash;&gt;-->
+<!--    <div class="review-block" th:each="review : ${advertisment.getReviews()}">-->
+<!--        <div class="stars">-->
+<!--            <p class="stars" th:if="${review.getRating() == 1}">&#9733;&#9734;&#9734;&#9734;&#9734;</p>-->
+<!--            <p class="stars" th:if="${review.getRating() == 2}">&#9733;&#9733;&#9734;&#9734;&#9734;</p>-->
+<!--            <p class="stars" th:if="${review.getRating() == 3}">&#9733;&#9733;&#9733;&#9734;&#9734;</p>-->
+<!--            <p class="stars" th:if="${review.getRating() == 4}">&#9733;&#9733;&#9733;&#9733;&#9734;</p>-->
+<!--            <p class="stars" th:if="${review.getRating() == 5}">&#9733;&#9733;&#9733;&#9733;&#9733;</p>-->
+<!--        </div>-->
+<!--        <p th:text="${review.getDescription()}">Описание отзыва</p>-->
+<!--        <p class="author" th:text="|Автор: ${review.getUser().getName()}|">Автор</p>-->
+<!--        <p>TODO ссылка для админа</p>-->
+<!--    </div>-->
+
+
+<!--    <hr/>-->
+<!--    <div th:if="${advertisment.getReviews().isEmpty()}"> Нет отзывов</div>-->
 
 <!--<form th:method="GET" th:action="@{/advertisments/{id}/ban(id=${advertisment.getId()})}">-->
 <!--    <input type="submit" value="Ban"/>-->
 <!--</form>-->
 
+
+
+
+<div th:replace="footer :: defaultFooter"></div>
+<script>
+    const imagesContainer = document.querySelector('.images');
+    const images = document.querySelectorAll('.image');
+    const prevImageButton = document.getElementById('prevImageButton');
+    const nextImageButton = document.getElementById('nextImageButton');
+    let currentImageIndex = 0;
+
+    function updateImagesPosition() {
+        const imageWidth = images[0].clientWidth;
+        imagesContainer.style.transform = `translateX(-${currentImageIndex * imageWidth}px)`;
+    }
+
+    prevImageButton.addEventListener('click', () => {
+        if (currentImageIndex > 0) {
+            currentImageIndex--;
+            updateImagesPosition();
+        }
+    });
+
+    nextImageButton.addEventListener('click', () => {
+        if (currentImageIndex < images.length - 1) {
+            currentImageIndex++;
+            updateImagesPosition();
+        }
+    });
+
+    window.addEventListener('resize', updateImagesPosition);
+
+    const reviewsContainer = document.querySelector('.reviews');
+    const reviews = document.querySelectorAll('.review');
+    const prevReviewButton = document.getElementById('prevReviewButton');
+    const nextReviewButton = document.getElementById('nextReviewButton');
+    let currentReviewIndex = 0;
+
+
+    function updateReviewsPosition() {
+        const reviewWidth = reviews[0].clientWidth;
+        reviewsContainer.style.transform = `translateX(-${currentReviewIndex * (reviewWidth + 20)}px)`;
+    }
+
+    prevReviewButton.addEventListener('click', () => {
+        if (currentReviewIndex > 0) {
+            currentReviewIndex--;
+            updateReviewsPosition();
+        }
+    });
+
+    nextReviewButton.addEventListener('click', () => {
+        if (currentReviewIndex < reviews.length - 1) {
+            currentReviewIndex++;
+            updateReviewsPosition();
+        }
+    });
+
+    window.addEventListener('resize', updateReviewsPosition);
+</script>
 </body>
 </html>

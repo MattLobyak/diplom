@@ -7,8 +7,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.matthew.MyShop.models.Role;
 import ru.matthew.MyShop.models.User;
+import ru.matthew.MyShop.repository.AdvertismentRepository;
+import ru.matthew.MyShop.repository.ReviewRepository;
 import ru.matthew.MyShop.repository.UserRepository;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +21,8 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AdvertismentRepository advertismentRepository;
+    private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
 
     public List<User> getAllUsers() {
@@ -44,6 +49,14 @@ public class UserService {
         user.setSecondName(userToUpdate.getSecondName());
         user.setEmail(userToUpdate.getEmail());
         user.setPhoneNumber(userToUpdate.getPhoneNumber());
+        userRepository.save(user);
+    }
+
+    public void removeAdvertisment(long id, Principal principal) {
+        User user = userRepository.findUserByEmail(principal.getName());
+        user.getAdvertisments().remove(advertismentRepository.getById(id));
+        reviewRepository.deleteReviewsByAdvertisment(advertismentRepository.findById(id).orElse(null));
+        advertismentRepository.deleteById(id);
         userRepository.save(user);
     }
 

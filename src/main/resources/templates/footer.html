@@ -17,9 +17,9 @@
         <nav>
             <ul>
                 <li><a href="/advertisments/index">Главная</a></li>
-                <li><a href="/users/index">Пользователи</a></li>
+                <li><a href="/admin/index">Админ</a></li>
                 <li><a href="/advertisments/new">Добавить объявление</a></li>
-                <li><a href="/cart">Корзина</a></li>
+                <li><a href="/advertisments/basket">Корзина</a></li>
                 <form action="/auth/logout" method="post">
                     <input type="hidden" th:name="${_csrf.getParameterName()}" th:value="${_csrf.token}">
                     <input type="submit" value="Выйти" style="background: none; border: none; color: white; cursor: pointer;">
@@ -30,9 +30,12 @@
     <br><br><br><br>
 </div>
 
-<footer th:fragment="defaultFooter">
-    <p>&copy; 2024 Маркетплейс. Все права защищены.</p>
-</footer>
+<div th:fragment="defaultFooter">
+    <br><br><br><br><br>
+    <footer>
+        <p>&copy; 2024 Маркетплейс. Все права защищены.</p>
+    </footer>
+</div>
 
 </body>
 </html>
