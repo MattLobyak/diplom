@@ -23,4 +23,5 @@ public interface AdvertismentRepository extends JpaRepository<Advertisment, Long
     Page<Advertisment> findAdvertismentByPriceGreaterThanEqual(Integer pricemore, Pageable pageable);
     //Поиск объявленя по наименованию
     Optional<Advertisment> findAdvertismentByName(String name);
+    List<Advertisment> findAdvertismentByOwnerEquals(User user);
 }

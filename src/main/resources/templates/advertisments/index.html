@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Все объявления</title>
@@ -25,7 +25,7 @@
 
 
             <div class="filter-block">
-                <form action="/advertisments/index" method="GET">
+                <form action="/advertisments/index" method="GET" id="MyForm">
                     <div class="form-group">
                         <label for="title">Название:</label>
                         <input type="text" id="title" name="title" placeholder="Введите название">
@@ -34,7 +34,7 @@
                     <div class="form-group">
                         <label for="category">Категория:</label>
                         <select id="category" name="category">
-                            <option value="" disabled selected>Любая</option>
+                            <option value="" selected>Любая</option>
                             <option th:each="categoryOpt : ${T(ru.matthew.MyShop.models.Category).values()}"
                                     th:value="${categoryOpt}" th:text="${categoryOpt.getRuValue}"></option>
                         </select>
@@ -43,7 +43,7 @@
                     <div class="form-group">
                         <label for="city">Город:</label>
                         <select id="city" name="city">
-                            <option value="" disabled selected>Любой</option>
+                            <option value="" selected>Любой</option>
                             <option th:each="cityOpt : ${T(ru.matthew.MyShop.models.City).values()}"
                                     th:value="${cityOpt}" th:text="${cityOpt.getRuValue}"></option>
                         </select>
@@ -52,7 +52,7 @@
                     <div class="form-group">
                         <label for="state">Качество:</label>
                         <select id="state" name="state">
-                            <option value="" disabled selected>Любое</option>
+                            <option value="" selected>Любое</option>
                             <option th:each="stateOpt : ${T(ru.matthew.MyShop.models.State).values()}"
                                     th:value="${stateOpt}" th:text="${stateOpt.getRuValue}"></option>
                         </select>
@@ -60,101 +60,114 @@
 
                     <div class="form-group">
                         <label for="price_from">Цена от:</label>
-                        <input type="text" id="price_from" name="price_from" placeholder="0">
+                        <input type="number" id="price_from" name="price_from" placeholder="0" min="0" max="10000000">
                     </div>
 
                     <div class="form-group">
                         <label for="price_to">Цена до:</label>
-                        <input type="text" id="price_to" name="price_to" placeholder="10000">
+                        <input type="number" id="price_to" name="price_to" placeholder="10000" min="0" max="10000000">
                     </div>
 
                     <div class="form-group">
                         <button type="submit">Применить фильтры</button>
                     </div>
                 </form>
+<!--                <div sec:authorize="hasRole('ROLE_ADMIN')">-->
+<!--                    This content is only shown to administrators.-->
+<!--                </div>-->
+                <div sec:authorize="hasRole('ROLE_USER')">
+                    This content is only shown to administrators.
+                </div>
+
+
             </div>
 
         </aside>
 
         <main class="content">
-            <h1>Товары</h1>
+            <h1 th:if="${advertismentsAre}">Товары</h1>
+            <h1 th:if="${advertismentsAreEmpty}">Товаров не найдено</h1>
             <div class="product-list">
 
                 <!--/*@thymesVar id="advertisment" type="ru.matthew.MyShop.models.Advertisment"*/-->
                 <div class="product-item" th:each="advertisment : ${advertisments}">
                     <div class="img-container">
-                        <img src="https://via.placeholder.com/150" alt="Product 1">
+                        <img th:src="${advertisment.getMainImagePath()}" alt="Product 1">
                     </div>
                     <p class="price" th:text="${advertisment.getPrice() + ' р.'}">Цена</p>
                     <a th:text="${advertisment.getName()}" th:href="@{/advertisments/{id}(id=${advertisment.getId()})}">Товар</a>
                     <p th:text="${advertisment.getDescription()}">Описание</p>
-                    <p th:text="${advertisment.getDateOfPublishing()}">Дата</p>
+                    <p th:text="${'Добавлено '+advertisment.getDateOfPublishing()}">Дата</p>
                     <p class="stars" th:if="${advertisment.getRating() == 1}">&#9733;&#9734;&#9734;&#9734;&#9734;</p>
                     <p class="stars" th:if="${advertisment.getRating() == 2}">&#9733;&#9733;&#9734;&#9734;&#9734;</p>
                     <p class="stars" th:if="${advertisment.getRating() == 3}">&#9733;&#9733;&#9733;&#9734;&#9734;</p>
                     <p class="stars" th:if="${advertisment.getRating() == 4}">&#9733;&#9733;&#9733;&#9733;&#9734;</p>
                     <p class="stars" th:if="${advertisment.getRating() == 5}">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
                     <p th:if="${advertisment.getRating() == 0}">Нет рейтинга</p>
-
-
-
-<!--                    <a th:href="@{/advertisments/{id}(id=${advertisment.getId()})}"-->
-<!--                       th:text="${advertisment.getName() + ', ' + advertisment.getDateOfPublishing() + '  Оценка '+ advertisment.getRating() + '   Всего оценок' + advertisment.getReviews().size() }">advertisment</a>-->
-
+                    <p th:text="${'Отзывов: ' + advertisment.getReviews().size()}"></p>
 
 
 
 
                 </div>
-
-
-                <!-- Дополнительные товары -->
             </div>
         </main>
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById('MyForm');
+            const titleInput = document.getElementById('title');
+            const citySelect = document.getElementById('city');
+            const categorySelect = document.getElementById('category');
+            const stateSelect = document.getElementById('state');
+            const priceFromSelect = document.getElementById('price_from');
+            const priceToSelect = document.getElementById('price_to');
 
+            // Load saved form data from localStorage
+            const savedTitle = localStorage.getItem('title');
+            const savedCity = localStorage.getItem('city');
+            const savedCategory = localStorage.getItem('category');
+            const savedState = localStorage.getItem('state');
+            const savedPriceFrom = localStorage.getItem('price_from');
+            const savedPriceTo = localStorage.getItem('price_to');
 
+            if (savedTitle) {
+                titleInput.value = savedTitle;
+            }
+            if (savedCity) {
+                citySelect.value = savedCity;
+            }
+            if (savedCategory) {
+                categorySelect.value = savedCategory;
+            }
+            if (savedState) {
+                stateSelect.value = savedState;
+            }
+            if (savedPriceFrom) {
+                priceFromSelect.value = savedPriceFrom;
+            }
+            if (savedPriceTo) {
+                priceToSelect.value = savedPriceTo;
+            }
 
+            // Save form data to localStorage on input change
+            form.addEventListener('input', function() {
+                localStorage.setItem('title', titleInput.value);
+                localStorage.setItem('city', citySelect.value);
+                localStorage.setItem('category', categorySelect.value);
+                localStorage.setItem('state', stateSelect.value);
+                localStorage.setItem('price_from', priceFromSelect.value);
+                localStorage.setItem('price_to', priceToSelect.value);
+            });
 
-
-
-
-
-
-
-
-
-
-
-
-
-<!--                    &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-<!--                    -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;СТАРЫЙ БЛОК ВЫВОДА-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-<!--                    &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-<!--<form action="/advertisments/index" method="get">-->
-<!--    Поиск по названию объявления: <input type="text" name="title"><br>-->
-<!--    <input type="submit" value="Поиск"/>-->
-<!--</form>-->
-<!--&lt;!&ndash;/*@thymesVar id="user" type="ru.matthew.MyShop.models.User"*/&ndash;&gt;-->
-<!--<h3 th:text="${'Пользователь ' + user.getName() + ' ' + user.getSecondName}"></h3>-->
-
-<!--&lt;!&ndash;/*@thymesVar id="advertisment" type="ru.matthew.MyShop.models.Advertisment"*/&ndash;&gt;-->
-<!--<div th:each="advertisment : ${advertisments}">-->
-<!--    <a th:href="@{/advertisments/{id}(id=${advertisment.getId()})}"-->
-<!--       th:text="${advertisment.getName() + ', ' + advertisment.getDateOfPublishing() + '  Оценка '+ advertisment.getRating() + '   Всего оценок' + advertisment.getReviews().size() }">advertisment</a>-->
-<!--    <hr/>-->
-<!--</div>-->
-<!--<div th:if="${advertisments == null}"> Нету </div>-->
-<!--<br/>-->
-
-<!--<a href="/advertisments/new">Create new advertisment</a>-->
-
-<!--<form action="/advertisments/index/{id}()" method="post">-->
-<!--    <input type="hidden" th:name="${_csrf.getParameterName()}" th:value="${_csrf.token}">-->
-<!--    <input type="submit" value="Выйти" style="background: none; border: none; color: white; cursor: pointer;">-->
-<!--</form>-->
-
+            // Optionally, you can clear the storage on form submit (or handle form submission)
+            // form.addEventListener('submit', function(event) {
+            //     event.preventDefault(); // Prevent actual form submission
+            //     alert('Form data saved!');
+            // });
+        });
+    </script>
 
 <div th:replace="footer :: defaultFooter"></div>
 </body>

@@ -1,0 +1,38 @@
+.user-block {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 5px;
+}
+.user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+}
+.user-actions {
+    display: flex;
+    gap: 10px;
+}
+.user-actions form {
+    display: inline-block;
+}
+.user-actions button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.block-btn {
+    background-color: #ff4d4d;
+    color: #fff;
+}
+.unblock-btn {
+    background-color: #4CAF50;
+    color: #fff;
+}
+.delete-btn {
+    background-color: #f44336;
+    color: #fff;
+}

@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+        lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" th:href="@{/style_fragment.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/admin.css}">
     <title>Страница администратора</title>
     <style>
         body {
@@ -54,6 +58,8 @@
         .tab-content {
             display: none;
             padding: 20px 0;
+            width: 50%;
+            margin: 0 auto;
         }
 
         .tab-content.active {
@@ -74,44 +80,94 @@
 
     <div class="container">
         <div class="tabs">
-            <button class="tab-link active" onclick="openTab(event, 'moderation')">Объявления на модерацию</button>
-            <button class="tab-link" onclick="openTab(event, 'active')">Активные объявления</button>
-            <button class="tab-link" onclick="openTab(event, 'users')">Пользователи</button>
+            <button class="tab-link active" onclick="openTab('users')">Пользователи</button>
+            <button class="tab-link" onclick="openTab('moderation')">Объявления на модерацию</button>
+            <button class="tab-link" onclick="openTab('active')">Активные объявления</button>
+            <button class="tab-link" onclick="openTab('modorders')">Заказы на модерации</button>
+            <button class="tab-link" onclick="openTab('readyorders')">Активные заказы</button>
         </div>
-        <!--/*@thymesVar id="advertismentsToMod" type="ru.matthew.MyShop.models.Advertisment"*/-->
-        <div id="moderation" class="tab-content active">
-            <div class="content-section" th:each="advertisment : ${advertismentsToMod}">
-                <a th:href="@{/advertisments/{id}(id=${advertisment.getId()})}" th:text="${advertisment.getName()}">advertisment</a>
-                <p th:text="${advertisment.getDescription()}"><strong>Описание:</strong> Описание </p>
-                <p th:text="${advertisment.getDateOfPublishing()}"><strong>Дата:</strong> Дата </p>
+        <!--/*@thymesVar id="advertismentToMod" type="ru.matthew.MyShop.models.Advertisment"*/-->
+        <div id="moderation" class="tab-content">
+            <h2 th:if="${advertismentsToMod.getSize()==0}">Ожидающих объявлений нет</h2>
+            <div class="user-info" th:each="advertismentToMod : ${advertismentsToMod}">
+                <div>
+                    <a th:href="@{/advertisments/{id}(id=${advertismentToMod.getId()})}" th:text="${advertismentToMod.getName()}">advertisment</a>
+                    <p th:text="${'Описание: ' + advertismentToMod.getDescription()}">Описание</p>
+                    <p th:text="${'Опубликовано: ' + advertismentToMod.getDateOfPublishing()}">Дата</p>
+                </div>
+                <div class="user-actions">
+                    <form th:method="GET" th:action="@{/advertisments/{id}/approve(id=${advertismentToMod.getId()})}">
+                        <button type="submit" class="unblock-btn">Подтвердить</button>
+                    </form>
+                    <form th:method="GET" th:action="@{/advertisments/{id}/deny(id=${advertismentToMod.getId()})}">
+                        <button type="submit" class="delete-btn">Удалить</button>
+                    </form>
+                </div>
             </div>
         </div>
 
         <!--/*@thymesVar id="advertismentsActive" type="ru.matthew.MyShop.models.Advertisment"*/-->
         <div id="active" class="tab-content">
-            <div class="content-section" th:each="advertisment : ${advertismentsActive}">
-                <a th:href="@{/advertisments/{id}(id=${advertisment.getId()})}" th:text="${advertisment.getName()}">advertisment</a>
-                <p th:text="${advertisment.getDescription()}"><strong>Описание:</strong> Описание </p>
-                <p th:text="${advertisment.getDateOfPublishing()}"><strong>Дата:</strong> Дата </p>
+            <div class="user-info" th:each="advertisment : ${advertismentsActive}">
+                <div>
+                    <a th:href="@{/advertisments/{id}(id=${advertisment.getId()})}" th:text="${advertisment.getName()}">advertisment</a>
+                    <p th:text="${'Описание: ' + advertisment.getDescription()}">Описание</p>
+                    <p th:text="${'Опубликовано: ' + advertisment.getDateOfPublishing()}">Дата</p>
+                </div>
+                <div class="user-actions">
+                    <form th:method="GET" th:action="@{/advertisments/{id}/delete(id=${advertisment.getId()})}">
+                        <button type="submit" class="delete-btn">Удалить</button>
+                    </form>
+                </div>
             </div>
+            <h2 th:if="${advertismentsActive == null}">Активных объявлений нет</h2>
         </div>
 
-        <div id="users" class="tab-content">
-            <div class="content-section">
-                <h3>Пользователь 1</h3>
-                <p>Email: user1@example.com</p>
-                <button>Заблокировать</button>
+        <!--/*@thymesVar id="users" type="ru.matthew.MyShop.models.User"*/-->
+        <div id="users" class="tab-content active">
+            <div class="user-info" th:each="user : ${users}">
+                <div>
+                    <h3 th:text="${user.getSecondName() + ' ' + user.getName()}">Имя пользователя</h3>
+                    <p th:text="${'Email: ' + user.getEmail()}">Email</p>
+                    <p th:text="${'Email: ' + user.getStatus().getRuValue()}">Статус</p>
+                </div>
+                <div class="user-actions">
+                    <form th:method="GET" th:action="@{/users/{id}/ban(id=${user.getId()})}" th:if="${user.getStatus() == T(ru.matthew.MyShop.models.Status).ACTIVE}">
+                        <button type="submit" class="block-btn">Заблокировать</button>
+                    </form>
+                    <form th:method="GET" th:action="@{/users/{id}/unban(id=${user.getId()})}" th:if="${user.getStatus() == T(ru.matthew.MyShop.models.Status).BLOCKED}">
+                        <button type="submit" class="unblock-btn">Разблокировать</button>
+                    </form>
+                    <form th:method="GET" th:action="@{/users/{id}/delete(id=${user.getId()})}">
+                        <button type="submit" class="delete-btn">Удалить</button>
+                    </form>
+                </div>
             </div>
-            <div class="content-section">
-                <h3>Пользователь 2</h3>
-                <p>Email: user2@example.com</p>
-                <button>Заблокировать</button>
+
+        </div>
+        <!--/*@thymesVar id="modorders" type="ru.matthew.MyShop.models.UserOrder"*/-->
+        <div id="modorders" class="tab-content">
+            <h2 th:if="${modorders.getSize()==0}">Ожидающих объявлений нет</h2>
+            <div class="user-info" th:each="orderToMod : ${modorders}">
+                <div>
+                    <a th:href="@{/advertisments/{id}(id=${orderToMod.getItem.getId()})}" th:text="${orderToMod.getItem.getName()}">advertisment</a>
+<!--                    <p th:text="${'Описание: ' + orderToMod.getAdvertisment.getDescription()}">Описание</p>-->
+<!--                    <p th:text="${'Опубликовано: ' + orderToMod.getAdvertisment.getDateOfPublishing()}">Дата</p>-->
+                </div>
+<!--                <div class="user-actions">-->
+<!--                    <form th:method="GET" th:action="@{/advertisments/{id}/approve(id=${advertismentToMod.getId()})}">-->
+<!--                        <button type="submit" class="unblock-btn">Подтвердить</button>-->
+<!--                    </form>-->
+<!--                    <form th:method="GET" th:action="@{/advertisments/{id}/deny(id=${advertismentToMod.getId()})}">-->
+<!--                        <button type="submit" class="delete-btn">Удалить</button>-->
+<!--                    </form>-->
+<!--                </div>-->
             </div>
         </div>
     </div>
 
     <script>
-        function openTab(event, tabId) {
+        function openTab(tabId) {
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tab-content");
             for (i = 0; i < tabcontent.length; i++) {
@@ -124,8 +180,14 @@
             }
             document.getElementById(tabId).style.display = "block";
             document.getElementById(tabId).classList.add("active");
+            // Сохраняем выбранный таб в localStorage
+            localStorage.setItem('selectedTab', tabId);
             event.currentTarget.classList.add("active");
         }
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectedTab = localStorage.getItem('selectedTab') || 'users';
+            openTab(selectedTab);
+        });
     </script>
 
     <div th:replace="footer :: defaultFooter"></div>

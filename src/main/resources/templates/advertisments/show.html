@@ -1,49 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" type="text/css" th:href="@{/style_fragment.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/style_show.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/test.css}">
 </head>
 <body>
 <div th:replace="footer :: defaultHeader"></div>
 
     <!--/*@thymesVar id="advertisment" type="ru.matthew.MyShop.models.Advertisment"*/-->
     <div class="container">
-        <div class="announcement">
-            <h1 th:text="${advertisment.getName()}">Название объявления</h1>
-            <p th:text="${advertisment.getDescription()}"><strong>Описание:</strong> Это описание вашего объявления. Здесь может быть любая информация, которую вы хотите указать.</p>
-            <p th:text="${advertisment.getPrice()+ ' р.'}"><strong>Цена:</strong> 1000 руб.</p>
-            <p><strong>Автор:</strong> <a th:text="${advertisment.getOwner().getSecondName() + ' ' + advertisment.getOwner().getName()}" th:href="@{/users/{id}(id=${advertisment.getOwner().getId()})}">ФИО</a></p>
-            <p th:text="${advertisment.getCity().getRuValue()}"><strong>Город:</strong> город</p>
-            <form th:method="GET" th:action="@{/advertisments/{id}/tobasket(id=${advertisment.getId()})}">-->
-                <input type="submit" value="В корзину!"/>
-            </form>
+        <h1 class="product-title" th:text="${advertisment.getName()}">Название объявления</h1>
+
+        <div class="slider-container">
+            <div class="slider">
+                <img th:src="${advertisment.getMainImagePath()}" alt="Белый пушистый кот">
+                <img th:src="${advertisment.getSecondImagePath()}" alt="Рыжий пушистый кот в джинсах">
+                <img th:src="${advertisment.getThirdImagePath()}" alt="Бело-рыжий пушистый кот">
+            </div>
+            <button class="prev-button" aria-label="Посмотреть предыдущий слайд">&lt;</button>
+            <button class="next-button" aria-label="Посмотреть следующий слайд">&gt</button>
         </div>
 
-        <div class="images-container">
-            <div class="images">
-                <div class="image">
-                    <img src="https://via.placeholder.com/800x400?text=Image+1" alt="Image 1">
-                </div>
-                <div class="image">
-                    <img src="https://via.placeholder.com/800x400?text=Image+2" alt="Image 2">
-                </div>
-                <div class="image">
-                    <img src="https://via.placeholder.com/800x400?text=Image+3" alt="Image 3">
-                </div>
-            </div>
-            <div class="buttons">
-                <div class="button" id="prevImageButton">Назад</div>
-                <div class="button" id="nextImageButton">Вперед</div>
-            </div>
+        <p class="product-author"><strong>Автор:</strong> <a th:text="${advertisment.getOwner().getSecondName() + ' ' + advertisment.getOwner().getName()}" th:href="@{/users/{id}(id=${advertisment.getOwner().getId()})}">ФИО</a></p>
+        <div class="product-details">
+            <p class="product-description" th:text="${advertisment.getDescription()}">Описание</p>
+            <p class="product-quality" th:text="${'Качество: ' + advertisment.getState().getRuValue()}">Качество</p>
+            <p class="product-location" th:text="${'Качество: ' + advertisment.getCity().getRuValue()}">Город</p>
+            <p class="product-price" th:text="${'Цена: ' + advertisment.getPrice()+ ' р.'}"></p>
         </div>
-    </div>
+        <p class="rating" th:if="${advertisment.getRating() == 1}">Рейтинг: &#9733;&#9734;&#9734;&#9734;&#9734;</p>
+        <p class="rating" th:if="${advertisment.getRating() == 2}">Рейтинг: &#9733;&#9733;&#9734;&#9734;&#9734;</p>
+        <p class="rating" th:if="${advertisment.getRating() == 3}">Рейтинг: &#9733;&#9733;&#9733;&#9734;&#9734;</p>
+        <p class="rating" th:if="${advertisment.getRating() == 4}">Рейтинг: &#9733;&#9733;&#9733;&#9733;&#9734;</p>
+        <p class="rating" th:if="${advertisment.getRating() == 5}">Рейтинг: &#9733;&#9733;&#9733;&#9733;&#9733;</p>
+        <p class="rating" th:if="${advertisment.getRating() == 0}">Нет рейтинга</p>
 
-    <div class="reviews-container">
+        <form th:method="GET" th:action="@{/advertisments/{id}/tobasket(id=${advertisment.getId()})}" sec:authorize="isAuthenticated()">
+            <input class="add-to-cart" type="submit" value="Добавить в корзину"/>
+        </form>
+
         <div class="reviews">
+            <h2 th:text="${'Отзывы покупателей (' + advertisment.getReviews().size() +'):'}">Отзывы покупателей:</h2>
             <div class="review" th:each="review : ${advertisment.getReviews()}">
+                <p><strong>Автор:</strong> <a th:text="${review.getUser().getSecondName() + ' ' + review.getUser().getName()}" th:href="@{/users/{id}(id=${review.getUser().getId()})}">ФИО автора отзыва</a></p>
                 <div class="stars">
                     <p class="stars" th:if="${review.getRating() == 1}">&#9733;&#9734;&#9734;&#9734;&#9734;</p>
                     <p class="stars" th:if="${review.getRating() == 2}">&#9733;&#9733;&#9734;&#9734;&#9734;</p>
@@ -51,15 +53,14 @@
                     <p class="stars" th:if="${review.getRating() == 4}">&#9733;&#9733;&#9733;&#9733;&#9734;</p>
                     <p class="stars" th:if="${review.getRating() == 5}">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
                 </div>
-                <p th:text="${review.getDescription()}">Это отличный продукт! Очень доволен покупкой.</p>
-                <p><strong>Автор:</strong> <a th:text="${review.getUser().getSecondName() + ' ' + review.getUser().getName()}" th:href="@{/users/{id}(id=${review.getUser().getId()})}">ФИО</a></p>
+                <p th:text="${review.getDescription()}">Описание</p>
             </div>
+
         </div>
-        <div class="buttons">
-            <div class="button" id="prevReviewButton"></div>
-            <div class="button" id="nextReviewButton"></div>
-        </div>
+
     </div>
+
+    <!--/*@thymesVar id="newReview" type="ru.matthew.MyShop.models.Review"*/-->
     <form th:method="POST" th:action="@{/advertisments/{advertismentId}/newReview(advertismentId = ${advertisment.getId()})}" th:object="${newReview}">
         <input type="hidden" th:field="*{id}" th:value="null">
         <label for="rating">Рейтинг: </label>
@@ -148,60 +149,43 @@
 
 <div th:replace="footer :: defaultFooter"></div>
 <script>
-    const imagesContainer = document.querySelector('.images');
-    const images = document.querySelectorAll('.image');
-    const prevImageButton = document.getElementById('prevImageButton');
-    const nextImageButton = document.getElementById('nextImageButton');
-    let currentImageIndex = 0;
+    const slider = document.querySelector('.slider');
+    const prevButton = document.querySelector('.prev-button');
+    const nextButton = document.querySelector('.next-button');
+    const slides = Array.from(slider.querySelectorAll('img'));
+    const slideCount = slides.length;
+    let slideIndex = 0;
 
-    function updateImagesPosition() {
-        const imageWidth = images[0].clientWidth;
-        imagesContainer.style.transform = `translateX(-${currentImageIndex * imageWidth}px)`;
+    // Устанавливаем обработчики событий для кнопок
+    prevButton.addEventListener('click', showPreviousSlide);
+    nextButton.addEventListener('click', showNextSlide);
+
+    // Функция для показа предыдущего слайда
+    function showPreviousSlide() {
+        slideIndex = (slideIndex - 1 + slideCount) % slideCount;
+        updateSlider();
     }
 
-    prevImageButton.addEventListener('click', () => {
-        if (currentImageIndex > 0) {
-            currentImageIndex--;
-            updateImagesPosition();
-        }
-    });
-
-    nextImageButton.addEventListener('click', () => {
-        if (currentImageIndex < images.length - 1) {
-            currentImageIndex++;
-            updateImagesPosition();
-        }
-    });
-
-    window.addEventListener('resize', updateImagesPosition);
-
-    const reviewsContainer = document.querySelector('.reviews');
-    const reviews = document.querySelectorAll('.review');
-    const prevReviewButton = document.getElementById('prevReviewButton');
-    const nextReviewButton = document.getElementById('nextReviewButton');
-    let currentReviewIndex = 0;
-
-
-    function updateReviewsPosition() {
-        const reviewWidth = reviews[0].clientWidth;
-        reviewsContainer.style.transform = `translateX(-${currentReviewIndex * (reviewWidth + 20)}px)`;
+    // Функция для показа следующего слайда
+    function showNextSlide() {
+        slideIndex = (slideIndex + 1) % slideCount;
+        updateSlider();
     }
 
-    prevReviewButton.addEventListener('click', () => {
-        if (currentReviewIndex > 0) {
-            currentReviewIndex--;
-            updateReviewsPosition();
-        }
-    });
+    // Функция для обновления отображения слайдера
+    function updateSlider() {
+        slides.forEach((slide, index) => {
+            if (index === slideIndex) {
+                slide.style.display = 'block';
+            } else {
+                slide.style.display = 'none';
+            }
+        });
+    }
 
-    nextReviewButton.addEventListener('click', () => {
-        if (currentReviewIndex < reviews.length - 1) {
-            currentReviewIndex++;
-            updateReviewsPosition();
-        }
-    });
+    // Инициализация слайдера
+    updateSlider();
 
-    window.addEventListener('resize', updateReviewsPosition);
 </script>
 </body>
 </html>

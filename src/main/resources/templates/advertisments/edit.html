@@ -1,84 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Создать объявление</title>
+  <meta charset="UTF-8">
+  <title>Редактировать объявление</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/advertisment.css}">
 </head>
 <body>
+
 <!--/*@thymesVar id="advertisment" type="ru.matthew.MyShop.models.Advertisment"*/-->
-<form th:method="POST" th:action="@{/advertisments/{id}(id = ${advertisment.getId()})}" th:object="${advertisment}">
-  <label for="name">Enter name: </label>
-  <input type="text" th:field="*{name}" id="name"/>
-  <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
-  <br/>
-  <label for="description">Enter description: </label>
-  <input type="text" th:field="*{description}" id="description"/>
-  <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">description Error</div>
-  <br/>
+<form th:method="POST" th:action="@{/advertisments/{id}/editadv(id = ${advertisment.getId()})}" th:object="${advertisment}" class="ad-form">
+  <h2>Создание объявления</h2>
+  <label for="title">Название:</label>
+  <input type="text" th:field="*{name}" id="title">
+  <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{description}">Name Error</div>
 
-  <label for="payment">Enter payment: </label>
-  <select th:field="*{payment}" id="payment" name="payment">
-  <option th:each="paymentOpt : ${T(ru.matthew.MyShop.models.Payment).values()}"
-          th:value="${paymentOpt}" th:text="${paymentOpt.getRuValue}"></option>
+  <label for="description">Описание:</label>
+  <textarea type="text" th:field="*{description}" id="description"></textarea>
+  <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</div>
+
+  <label for="category">Категория:</label>
+  <select th:field="*{category}" id="category" name="category" required>
+    <option th:each="categoryOpt : ${T(ru.matthew.MyShop.models.Category).values()}"
+            th:value="${categoryOpt}" th:text="${categoryOpt.getRuValue}"></option>
   </select>
-  <br/>
 
-  <label for="city">Enter city: </label>
+  <label for="state">Качество товара:</label>
+  <select th:field="*{state}" id="state" name="state">
+    <option th:each="stateOpt : ${T(ru.matthew.MyShop.models.State).values()}"
+            th:value="${stateOpt}" th:text="${stateOpt.getRuValue}"></option>
+  </select>
+
+  <label for="payment">Вид оплаты:</label>
+  <select th:field="*{payment}" id="payment" name="payment">
+    <option th:each="paymentOpt : ${T(ru.matthew.MyShop.models.Payment).values()}"
+            th:value="${paymentOpt}" th:text="${paymentOpt.getRuValue}"></option>
+  </select>
+
+  <label for="price">Цена:</label>
+  <input type="text" th:field="*{price}" id="price"></input>
+  <div style="color:red" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">price Error</div>
+
+  <label for="city">Город:</label>
   <select th:field="*{city}" id="city" name="city">
+    <option value="" disabled selected>Выберите город</option>
     <option th:each="cityOpt : ${T(ru.matthew.MyShop.models.City).values()}"
             th:value="${cityOpt}" th:text="${cityOpt.getRuValue}"></option>
   </select>
-  <br/>
 
-
-  <input type="submit" value="Update!"/>
+  <button type="submit">Изменить объявление</button>
 </form>
 
-
-
-
-
-
-
-
-
-
-
-<!--<form th:method="POST" th:action="@{/advertisments}" th:object="${advertisment}">-->
-<!--  <label for="name">Enter name: </label>-->
-<!--  <input type="text" th:field="*{name}" id="name"/>-->
-<!--  <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>-->
-<!--  <br/>-->
-
-
-<!--  <label for="description">Enter description: </label>-->
-<!--  <input type="text" th:field="*{description}" id="description"/>-->
-<!--  <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">description Error</div>-->
-<!--  <br/>-->
-
-<!--  <select th:field="*{payment} id="payment" name="payment">-->
-<!--  <option th:each="paymentOpt : ${T(ru.matthew.MyShop.models.Payment).values()}"-->
-<!--          th:value="${paymentOpt}" th:text="${paymentOpt.getRuValue}"></option>-->
-<!--  </select>-->
-
-<!--  &lt;!&ndash;  <select th:field="*{payment}" id="payment" name="payment">&ndash;&gt;-->
-<!--  &lt;!&ndash;    <option th:value="PAYMENT.PRICE" th:text="Цена"></option>&ndash;&gt;-->
-<!--  &lt;!&ndash;    <option th:value="PAYMENT.NEGOTIATED" th:text="Договорная"></option>&ndash;&gt;-->
-<!--  &lt;!&ndash;    <option th:value="PAYMENT.FREE" th:text="Бесплатно"></option>&ndash;&gt;-->
-<!--  &lt;!&ndash;  </select>&ndash;&gt;-->
-<!--  <br/>-->
-
-<!--  <select th:field="*{city}" id="city" name="city">-->
-<!--    <option th:value="CITY.MINSK" th:text="Минск"></option>-->
-<!--    <option th:value="CITY.GOMEL" th:text="Гомель"></option>-->
-<!--    <option th:value="CITY.GRODNO" th:text="Гродно"></option>-->
-<!--    <option th:value="CITY.BREST" th:text="Брест"></option>-->
-<!--    <option th:value="CITY.VITEBSK" th:text="Витебск"></option>-->
-<!--    <option th:value="CITY.MOGILEV" th:text="Могилёв"></option>-->
-<!--  </select>-->
-<!--  <br/>-->
-
-<!--  <input type="submit" value="Create!"/>-->
-<!--</form>-->
 </body>
 </html>

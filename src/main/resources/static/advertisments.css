@@ -108,6 +108,7 @@ header nav a {
 .product-item img {
     height:100%;
     width: auto;
+    max-width: 100%;
 }
 
 .product-item p, .product-item a {

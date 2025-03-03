@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" type="text/css" th:href="@{/style_fragment.css}">
-    <link rel="stylesheet" type="text/css" th:href="@{/usershow.css}">
+
+    <link rel="stylesheet" type="text/css" th:href="@{/basket.css}">
 </head>
 <body>
     <div th:replace="footer :: defaultHeader"></div>
@@ -14,11 +15,26 @@
         <div class="ads">
             <h2>Моя корзина</h2>
 
-            <div class="ad" th:each="advertisment : ${advertisments}">
-                <a th:href="@{/advertisments/{id}(id=${advertisment.getId()})}" th:text="${advertisment.getName()}">advertisment</a>
-                <p th:text="${advertisment.getDescription()}"><strong>Описание:</strong> Описание </p>
-                <p th:text="${advertisment.getDateOfPublishing()}"><strong>Дата:</strong> Дата </p>
+            <div class="product" th:each="advertisment : ${advertisments}">
+                <div class="product-image">
+                    <img src="https://via.placeholder.com/100" alt="Товар 1">
+                </div>
+                <div class="product-info">
+                    <a th:href="@{/advertisments/{id}(id=${advertisment.getId()})}" th:text="${advertisment.getName()}">advertisment</a>
+                    <p th:text="${advertisment.getDescription()}">Описание</p>
+                    <p class="product-price" th:text="${'Цена: ' + advertisment.getPrice()+ ' р.'}">Цена</p>
+                    <p class="product-author" th:text="${'Автор: ' + advertisment.getOwner().getSecondName() + ' ' + advertisment.getOwner().getName()}"  >Автор: Иван Иванов</p>
+                </div>
+                <div class="product-actions">
+                    <form th:method="GET" th:action="@{/advertisments/{id}/newOrder(id=${advertisment.getId()})}">
+                        <button type="submit" class="order-button">Заказать</button>
+                    </form>
+                    <form th:method="GET" th:action="@{/advertisments/basket/{id}/delfrombasket(id=${advertisment.getId()})}">
+                        <button type="submit" class="remove-button">Удалить</button>
+                    </form>
+                </div>
             </div>
+
             <div th:if="${advertisments == null}"> Здесь пока пусто </div>
         </div>
     </div>

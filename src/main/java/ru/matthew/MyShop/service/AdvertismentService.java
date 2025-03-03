@@ -68,7 +68,12 @@ public class AdvertismentService {
     }
 
     public void updateAdvertisment(Advertisment advertismentToUpdate, Long id) {
+        Advertisment currentAdvertisment = advertismentRepository.getById(id);
+
         advertismentToUpdate.setId(id);
+        advertismentToUpdate.setStatus(Status.MODERATION);
+        advertismentToUpdate.setDateOfPublishing(currentAdvertisment.getDateOfPublishing());
+        advertismentToUpdate.setOwner(currentAdvertisment.getOwner());
         advertismentRepository.save(advertismentToUpdate);
     }
 
@@ -103,15 +108,15 @@ public class AdvertismentService {
 //        return advertismentRepository.save(advertisment);
 //    }
 
-    private Image fileToImage(MultipartFile file) throws IOException {
-        Image image = new Image();
-        image.setName(file.getName());
-        image.setOriginalFileName(file.getOriginalFilename());
-        image.setContentType(file.getContentType());
-        image.setSize(file.getSize());
-        image.setBytes(file.getBytes());
-        return image;
-    }
+//    private Image fileToImage(MultipartFile file) throws IOException {
+//        Image image = new Image();
+//        image.setName(file.getName());
+//        image.setOriginalFileName(file.getOriginalFilename());
+//        image.setContentType(file.getContentType());
+//        image.setSize(file.getSize());
+//        image.setBytes(file.getBytes());
+//        return image;
+//    }
 
     public void deleteAdvertisment(Long id) {
         Advertisment advertismentToDelete = advertismentRepository.findById(id).orElse(null);
@@ -127,12 +132,44 @@ public class AdvertismentService {
         basketRepository.save(basket);
     }
 
+    public void deleteAdvertismentFromBusket(long id, Principal principal) {
+        User owner = userRepository.findUserByEmail(principal.getName());
+        Basket basket = basketRepository.findBasketByOwnerEqualsAndItemIdEquals(owner, id);
+        owner.getBasketItems().remove(basket);
+        basketRepository.delete(basket);
+        userRepository.save(owner);
+    }
+
+    public void approve(long id) {
+        Advertisment advertisment = advertismentRepository.findById(id).orElse(null);
+        User owner = advertisment.getOwner();
+        advertisment.setStatus(Status.ACTIVE);
+        for (Advertisment eachAdvertisment : owner.getAdvertisments()) {
+            if (eachAdvertisment == advertisment){
+                advertisment.setStatus(Status.ACTIVE);
+            }
+        }
+        userRepository.save(owner);
+    }
+
+    public void deny(long id) {
+        Advertisment advertisment = advertismentRepository.findById(id).orElse(null);
+        User owner = advertisment.getOwner();
+        advertisment.setStatus(Status.BLOCKED);
+        for (Advertisment eachAdvertisment : owner.getAdvertisments()) {
+            if (eachAdvertisment == advertisment){
+                advertisment.setStatus(Status.BLOCKED);
+            }
+        }
+        userRepository.save(owner);
+    }
+
     public List<Advertisment> findBasketAddvetisments(Principal principal) {
         User user = userRepository.findUserByEmail(principal.getName());
         List<Advertisment> basket = new ArrayList<>();
         //List<Basket> basketItems = basketRepository.findBasketByOwner(userRepository.findUserByEmail(principal.getName()).getId());
         for (Basket basketItem : user.getBasketItems() ){
-            basket.add(advertismentRepository.findById(basketItem.getAdvertismentId()).orElse(null));
+            basket.add(advertismentRepository.findById(basketItem.getItemId()).orElse(null));
         }
         return basket;
     }

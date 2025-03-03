@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Форма заказа товара</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .form-group select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+    .card-details {
+      display: none;
+    }
+    .card-details input {
+      margin-bottom: 10px;
+    }
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      font-size: 1.2em;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+<!--/*@thymesVar id="newuserorder" type="ru.matthew.MyShop.models.UserOrder"*/-->
+  <div class="container">
+    <h1>Оформление заказа</h1>
+    <h3>Ваш товар: <a th:text="${newuserorder.getItem().getName()}" th:href="@{/advertisments/{id}(id=${newuserorder.getItem().getId()})}">Товар</a></h3>
+    <p th:text="${'Описание: ' + newuserorder.getItem().getDescription()}">Описание</p>
+    <p th:text="${'Цена: ' + newuserorder.getItem().getPrice()}">Цена</p>
+    <form th:method="POST" th:action="@{/advertisments/{id}/orderitem(id=${newuserorder.getItem().getId()})}" th:object="${newuserorder}">
+        <div class="form-group">
+            <label for="name">Имя получателя</label>
+            <input type="text" th:field="*{name}" id="name" name="name" required minlength="3" maxlength="20" pattern="[А-Яа-яЁё]{20}">
+            <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
+        </div>
+        <div class="form-group">
+            <label for="contact-number">Контактный номер для связи </label>
+            <input type="text" th:field="*{phoneNumber}" id="contact-number" name="contact-number" required>
+        <div style="color:red" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}">Phone error</div>
+        </div>
+            <div class="form-group">
+            <label for="address">Адрес доставки (Укажите пожалуйста максимально подробно)</label>
+            <input type="text" id="address" name="address" required>
+        </div>
+      <div class="form-group">
+        <label>Тип оплаты</label>
+          <select th:field="*{orderPayment}" name="payment-type" id="payment-type" onchange="toggleCardDetails()" required>
+              <option th:each="orderPayment : ${T(ru.matthew.MyShop.models.OrderPayment).values()}"
+                      th:value="${orderPayment}" th:text="${orderPayment}"></option>
+          </select>
+      </div>
+      <div id="card-details" class="card-details">
+        <div class="form-group">
+          <label for="card-number">Номер карты</label>
+          <input type="text" id="card-number" name="card-number">
+        </div>
+        <div class="form-group">
+          <label for="card-expiry">Срок действия карты</label>
+          <input type="text" id="card-expiry" name="card-expiry" placeholder="MM/YY">
+        </div>
+        <div class="form-group">
+          <label for="card-cvc">CVC</label>
+          <input type="text" id="card-cvc" name="card-cvc">
+        </div>
+      </div>
+      <button type="submit" class="submit-btn">Оформить заказ</button>
+    </form>
+
+
+      <script>
+          function toggleCardDetails() {
+              const paymentType = document.getElementById('payment-type').value;
+              const cardDetails = document.getElementById('card-details');
+              console.log(paymentType);
+              if (paymentType === "CARD") {
+                  cardDetails.style.display = 'block';
+              } else {
+                  cardDetails.style.display = 'none';
+              }
+          }
+      </script>
+  </div>
+</body>
+</html>

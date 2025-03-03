@@ -8,5 +8,7 @@ import ru.matthew.MyShop.models.User;
 import java.util.List;
 
 public interface BasketRepository extends JpaRepository<Basket, Long> {
-    List<Basket> findBasketByOwner(User user);
+    List<Basket> findBasketsByOwner(User user);
+
+    Basket findBasketByOwnerEqualsAndItemIdEquals(User user, long id);
 }

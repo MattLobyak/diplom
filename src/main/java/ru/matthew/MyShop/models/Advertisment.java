@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -65,8 +67,23 @@ public class Advertisment {
     @JsonIgnore
     private User owner;
 
+    @Column(name = "mainImagePath")
+    private String mainImagePath;
+
+    @Column(name = "secondImagePath")
+    private String secondImagePath;
+
+    @Column(name = "thirdImagePath")
+    private String thirdImagePath;
+
+
     @OneToMany(mappedBy = "advertisment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Review> reviews;
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<UserOrder> orders;
 
 
     public Integer getRating() {

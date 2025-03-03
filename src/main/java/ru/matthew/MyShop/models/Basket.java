@@ -18,8 +18,8 @@ public class Basket {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "advertismentId")
-    private Long advertismentId;
+    @Column(name = "itemId")
+    private Long itemId;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")

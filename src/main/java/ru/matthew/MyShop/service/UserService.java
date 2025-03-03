@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.matthew.MyShop.models.Advertisment;
 import ru.matthew.MyShop.models.Role;
+import ru.matthew.MyShop.models.Status;
 import ru.matthew.MyShop.models.User;
 import ru.matthew.MyShop.repository.AdvertismentRepository;
 import ru.matthew.MyShop.repository.ReviewRepository;
@@ -36,6 +38,7 @@ public class UserService {
     public boolean registerUser(User user) {
         if (userRepository.findUserByEmail(user.getEmail())!= null) return false;
         user.setRole(Role.ROLE_USER);
+        user.setStatus(Status.ACTIVE);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         System.out.println(user.getPassword());
         System.out.println("Пароль                 -                 " + passwordEncoder.encode(user.getPassword()));
@@ -49,29 +52,41 @@ public class UserService {
         user.setSecondName(userToUpdate.getSecondName());
         user.setEmail(userToUpdate.getEmail());
         user.setPhoneNumber(userToUpdate.getPhoneNumber());
+        user.setPassword(passwordEncoder.encode(userToUpdate.getPassword()));
         userRepository.save(user);
     }
 
     public void removeAdvertisment(long id, Principal principal) {
         User user = userRepository.findUserByEmail(principal.getName());
         user.getAdvertisments().remove(advertismentRepository.getById(id));
-        reviewRepository.deleteReviewsByAdvertisment(advertismentRepository.findById(id).orElse(null));
         advertismentRepository.deleteById(id);
         userRepository.save(user);
     }
 
-//    public void banUser(Long id) {
-//        User userToBan = userRepository.getById(id);
-//        userToBan.getRoles().
-//        log.info("Banning user {}",userToBan.getId());
-//        userRepository.save(userToBan);
-//    }
+    public void banUser(Long id) {
+        User userToBan = userRepository.getById(id);
+        userToBan.setStatus(Status.BLOCKED);
+        userRepository.save(userToBan);
 
-//    public void unbanUser(Long id) {
-//        User userToUnban = userRepository.getById(id);
-//        userToUnban.setRole(Role.ROLE_USER);
-//        userRepository.save(userToUnban);
-//    }
+        List<Advertisment> advertisments = advertismentRepository.findAdvertismentByOwnerEquals(userToBan);
+        for (Advertisment advertisment : advertisments){
+            advertisment.setStatus(Status.BLOCKED);
+            advertismentRepository.save(advertisment);
+        }
+    }
+
+    public void unbanUser(Long id) {
+        User userToBan = userRepository.getById(id);
+        userToBan.setStatus(Status.ACTIVE);
+        userRepository.save(userToBan);
+
+        List<Advertisment> advertisments = advertismentRepository.findAdvertismentByOwnerEquals(userToBan);
+        for (Advertisment advertisment : advertisments) {
+            advertisment.setStatus(Status.MODERATION);
+            advertismentRepository.save(advertisment);
+        }
+
+    }
 
     public void deleteUser(Long id) {
         log.info("Deleting user with id {}", id);
